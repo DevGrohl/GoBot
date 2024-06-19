@@ -44,5 +44,7 @@ func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
 	switch {
 	case strings.Contains(message.Content, "!help"):
 		discord.ChannelMessageSend(message.ChannelID, "Hello World!")
+	case strings.Contains(message.Content, "!watch"):
+		discord.ChannelMessageSend(message.ChannelID, "I'm watching !")
 	}
 }

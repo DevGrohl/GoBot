@@ -24,4 +24,6 @@ func main() {
 
 	bot.BotToken = discordTokenID
 	bot.Run()
+
+	fmt.Println("Bot shutting down...")
 }

@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - .:/app
+    # develop:
+      # watch:
+        # - action: rebuild
+          # path: ./
+          # target: /app
