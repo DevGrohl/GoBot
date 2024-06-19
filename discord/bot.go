@@ -1,4 +1,4 @@
-package bot
+package bot // github.com/devgrohl/GoBot/internal/discord/bot
 
 import (
 	"fmt"
