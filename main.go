@@ -20,7 +20,6 @@ func goDotEnvVariable(key string) string {
 
 func main() {
 	discordTokenID := goDotEnvVariable("DISCORD_TOKEN_ID")
-	fmt.Printf("Attempting to start bot with Token ID: %s\n", discordTokenID)
 
 	bot.BotToken = discordTokenID
 	bot.Run()
