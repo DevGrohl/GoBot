@@ -14,16 +14,42 @@ import (
 
 var BotToken string
 
-func checkNilErr(e error) {
+func checkNilErr(e error, msg ...string) {
 	if e != nil {
-		log.Fatal("Error message")
+		log.Fatal(strings.Join(msg, " ") + " Fatal error: " + e.Error())
 	}
 }
 
 func Run() {
 	// create a session
 	discord, err := discordgo.New("Bot " + BotToken)
-	checkNilErr(err)
+	checkNilErr(err, "New Session")
+
+	// Create a new Application
+	app := &discordgo.Application{}
+	app.Name = "GoBot"
+	app.Description = "General purpose Discord Bot"
+
+	// Show information about the application
+	log.Printf("Application Name: %v\n", app.Name)
+	log.Printf("Application ID: %v\n", app.ID)
+	log.Printf("Application Description: %v\n", app.Description)
+
+	app, err = discord.ApplicationCreate(app)
+	checkNilErr(err, "ApplicationCreate")
+	log.Printf("Application ID: %v App: %+v\n", app.ID, app)
+
+	app, err = discord.Application(app.ID)
+	checkNilErr(err, "Application")
+	log.Printf("Application ID: %v App: %+v\n", app.ID, app)
+
+	apps, err := discord.Applications()
+	checkNilErr(err, "Applications")
+	log.Printf("Applications: %+v\n", apps)
+
+	for k, v := range apps {
+		log.Printf("Application ID: %v App: %+v\n", k, v)
+	}
 
 	// add a event handler
 	discord.AddHandler(newMessage)
@@ -61,7 +87,7 @@ func timeoutUser(discord *discordgo.Session, channelID string, userID string) {
 	// Check for permissions to Timeout
 	perms, err := discord.UserChannelPermissions(discord.State.User.ID, channelID)
 	checkNilErr(err)
-	if perms&discordgo.PermissionAdministrator != 0 {
+	if perms&discordgo.PermissionAdministrator == 0 {
 		discord.ChannelMessageSend(channelID, "I don't have permissions to timeout this user")
 	}
 
