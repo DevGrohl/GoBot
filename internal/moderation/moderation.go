@@ -1,4 +1,4 @@
-package moderator
+package moderation
 
 import (
 	"fmt"
@@ -8,12 +8,12 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func main(s *discordgo.Session, GuildID) {
+func main(s *discordgo.Session, GuildID string) {
 	s.Identify.Intents |= discordgo.IntentAutoModerationExecution
 	s.Identify.Intents |= discordgo.IntentMessageContent
 
 	enabled := true
-	rule, err := s.AutoModerationRuleCreate(*GuildID, &discordgo.AutoModerationRule{
+	rule, err := s.AutoModerationRuleCreate(GuildID, &discordgo.AutoModerationRule{
 		Name:        "Auto Moderation",
 		EventType:   discordgo.AutoModerationEventMessageSend,
 		TriggerType: discordgo.AutoModerationEventTriggerKeyword,
@@ -33,10 +33,10 @@ func main(s *discordgo.Session, GuildID) {
 	}
 
 	fmt.Println("Auto moderation rules created")
-	defer s.AutoModerationRuleDelete(*GuildID, rule.ID)
+	defer s.AutoModerationRuleDelete(GuildID, rule.ID)
 
 	s.AddHandlerOnce(func(s *discordgo.Session, e *discordgo.AutoModerationActionExecution) {
-		_, err = s.AutoModerationRuleEdit(*GuildID, rule.ID, &discordgo.AutoModerationRule{
+		_, err = s.AutoModerationRuleEdit(GuildID, rule.ID, &discordgo.AutoModerationRule{
 			TriggerMetadata: &discordgo.AutoModerationTriggerMetadata{
 				KeywordFilter: []string{"negro"},
 			},
@@ -47,7 +47,7 @@ func main(s *discordgo.Session, GuildID) {
 			},
 		})
 		if err != nil {
-			s.AutoModerationRuleDelete(*GuildID, rule.ID)
+			s.AutoModerationRuleDelete(GuildID, rule.ID)
 			panic(err)
 		}
 
@@ -77,7 +77,7 @@ func main(s *discordgo.Session, GuildID) {
 				s.ChannelMessageSend(e.ChannelID, "Multiple occurrences of the same violation")
 
 				s.Close()
-				s.AutoModerationRuleDelete(GuildId, rule.ID)
+				s.AutoModerationRuleDelete(GuildID, rule.ID)
 				os.Exit(0)
 			}
 		})
